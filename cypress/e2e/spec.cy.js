@@ -68,4 +68,61 @@ describe('TODOMvc App', () => {
       .children()
       .should('have.length', 2);
   });
+
+    it('Marca todas as tarefas como completas', () => {
+    cy.visit('');
+
+    cy.get('[data-cy=todo-input]')
+      .type('Tarefa 1{enter}')
+      .type('Tarefa 2{enter}')
+      .type('Tarefa 3{enter}');
+
+    cy.get('[data-cy=toggle-all]')
+      .click();
+
+    cy.get('[data-cy=todos-list] > li')
+      .each(($el) => {
+        cy.wrap($el).find('[data-cy=toggle-todo-checkbox]').should('be.checked');
+      });
+  });
+
+  it('Edita uma tarefa existente', () => {
+    cy.visit('');
+
+    cy.get('[data-cy=todo-input]')
+      .type('Tarefa para editar{enter}');
+
+    cy.get('[data-cy=todos-list] > li')
+      .first()
+      .dblclick();
+
+    cy.get('[data-cy=todo-edit-input]')
+      .clear()
+      .type('Tarefa editada{enter}');
+
+    cy.get('[data-cy=todos-list] > li')
+      .first()
+      .should('have.text', 'Tarefa editada');
+  });
+
+  it('Remove todas as tarefas completas', () => {
+    cy.visit('');
+
+    cy.get('[data-cy=todo-input]')
+      .type('Tarefa 1{enter}')
+      .type('Tarefa 2{enter}');
+
+    cy.get('[data-cy=todos-list] > li [data-cy=toggle-todo-checkbox]')
+      .first()
+      .click();
+
+    cy.get('[data-cy=clear-completed-btn]')
+      .click();
+
+    cy.get('[data-cy=todos-list]')
+      .children()
+      .should('have.length', 1)
+      .first()
+      .should('have.text', 'Tarefa 2');
+  });
 });
